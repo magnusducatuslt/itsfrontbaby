@@ -4,7 +4,6 @@ import { Switch, Route, Link } from "react-router-dom";
 import { Login, Home, Account, Voting, CreateWallet } from "./pages";
 import Navbar from "./components/navbar";
 import CssBaseline from "@material-ui/core/CssBaseline";
-import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import "./App.css";
 function App() {
@@ -14,10 +13,7 @@ function App() {
       <CssBaseline />
       <Container fixed>
         <Switch>
-          <Route path="/voting">
-            <Voting.Page />
-          </Route>
-          <Route path="/create">
+          <Route path="/create*">
             <CreateWallet.Page />
           </Route>
           <Route path="/account">

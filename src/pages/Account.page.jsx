@@ -67,7 +67,6 @@ export function Page() {
         )
         .then((txHash) => {
           console.log(txHash);
-          // self.$toast.success("Голос учтен");
           axios
             .post(`${process.env.REACT_APP_CORE_HOST}/voted`, {
               address: candidat.address,
