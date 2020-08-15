@@ -1,11 +1,33 @@
 import React, { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import { Form } from "../components/form";
+import axios from 'axios'
+import { useHistory } from "react-router-dom";
+
 export function Page() {
+  const history = useHistory();
+
   const [seed, setSeed] = useState("");
   function createPassport() {
     window.Telegram.Passport.auth(creeds, function (show) {
       console.log("passport auth", show);
+
+      const id = '141452391'// localStorage.getItem('account_id')
+
+      if (!id) {
+        history.push('/login')
+      } else {
+        axios.get(`https://core.ididntknowwhatyouheardaboutme.tk/user/${id}`)
+        .then((response) => {
+          const { data } = response
+          if (data.message && data.message.wallet) {
+            alert('wallet exist')
+          }
+          console.log(response.data)
+        }).catch(() => {
+          history.push('/login')
+        })
+      }  
     });
   }
   function submitSeed(e) {
