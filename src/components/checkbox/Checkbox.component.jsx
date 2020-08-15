@@ -5,10 +5,23 @@ import Radio from "@material-ui/core/Radio";
 import FormControl from "@material-ui/core/FormControl";
 import RadioGroup from '@material-ui/core/RadioGroup'
 import FormLabel from '@material-ui/core/FormLabel'
+import Avatar from '@material-ui/core/Avatar';
+import { makeStyles } from '@material-ui/core/styles';
 
+const useStyles = makeStyles((theme) => ({
+  root: {
+    display: 'flex',
+    alignItems: 'center',
+    '& > *': {
+      margin: theme.spacing(1),
+    },
+  }
+}));
 
 export default function CheckboxLabels({ candidats, onSubmit, hasSeed }) {
   const [id, setId] = React.useState();
+
+  const classes = useStyles();
 
   const handleChange = (event) => {
     setId(event.target.value);
@@ -29,11 +42,17 @@ export default function CheckboxLabels({ candidats, onSubmit, hasSeed }) {
         Проголосовать
       </Button>
     <div>
+
       <FormControl component="fieldset">
         <RadioGroup  aria-label="gender" name="gender1" value={id} onChange={handleChange}>
           {candidats.map((c) => {
+            const label = <div className={classes.root}>
+              <Avatar alt="Remy Sharp" src={c.img} /> 
+              <span>{c.name} ({c.address})</span>
+            </div>
             return (
-              <FormControlLabel value={c.id} control={<Radio disabled={!hasSeed} />} label={ `${c.name} (${c.address})`} />
+              <FormControlLabel value={c.id} control={<Radio disabled={!hasSeed} />} 
+              label={label} />
              )
           })}
         </RadioGroup>
