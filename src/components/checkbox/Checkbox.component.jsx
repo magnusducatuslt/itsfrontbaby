@@ -1,55 +1,39 @@
-import React from "react";
-import { withStyles } from "@material-ui/core/styles";
-import { green } from "@material-ui/core/colors";
-import FormGroup from "@material-ui/core/FormGroup";
+import React, { useState } from "react";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
-import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import Button from "@material-ui/core/Button";
-import Favorite from "@material-ui/icons/Favorite";
-import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
+import Radio from "@material-ui/core/Radio";
+import FormControl from "@material-ui/core/FormControl";
+import RadioGroup from '@material-ui/core/RadioGroup'
+import FormLabel from '@material-ui/core/FormLabel'
+
 
 export default function CheckboxLabels({ candidats, onSubmit }) {
-  const signedCandidats = candidats.reduce((prev, cand) => {
-    prev[cand.name] = true;
-
-    return prev;
-  }, {});
-
-  const [state, setState] = React.useState(signedCandidats);
+  const [id, setId] = React.useState();
 
   const handleChange = (event) => {
-    setState({ ...state, [event.target.name]: event.target.checked });
+    setId(event.target.value);
   };
-
-  const checkboxs = candidats.map((cand) => (
-    <FormControlLabel
-      control={
-        <Checkbox
-          key={`${Date.now}${cand.id}`}
-          icon={<FavoriteBorder />}
-          checkedIcon={<Favorite />}
-          onChange={handleChange}
-          value={cand.id}
-          name={cand.id}
-        />
-      }
-      label={cand.name}
-    />
-  ));
 
   return (
     <div>
-      <FormGroup row>{checkboxs}</FormGroup>
+      <FormControl component="fieldset">
+        <FormLabel component="legend">Gender</FormLabel>
+        <RadioGroup aria-label="gender" name="gender1" value={id} onChange={handleChange}>
+          {candidats.map((c) => {
+            return (
+              <FormControlLabel value={c.id} control={<Radio />} label={c.name} />
+             )
+          })}
+        </RadioGroup>
+      </FormControl>
+
       <Button
         variant="contained"
         color="primary"
+        disabled={!id}
         onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          console.log(state);
-          //onSubmit(state);
+          const canditate = candidats.find(x => x.id === id)
+          console.log(' canditate ', canditate)
         }}
       >
         Проголосовать
