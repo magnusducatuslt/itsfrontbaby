@@ -1,7 +1,7 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import { Switch, Route, Link } from "react-router-dom";
-import { Login, Home, Account, Voting } from "./pages";
+import { Login, Home, Account, Voting, CreateWallet } from "./pages";
 import "./App.css";
 function App() {
   return (
@@ -28,6 +28,9 @@ function App() {
         </Route>
         <Route path="/voting">
           <Voting.Page />
+        </Route>
+        <Route path="/create">
+          <CreateWallet.Page />
         </Route>
         <Route path="/account">
           <Account.Page />
