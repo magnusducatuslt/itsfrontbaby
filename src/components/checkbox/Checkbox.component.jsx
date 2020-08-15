@@ -48,7 +48,7 @@ export default function CheckboxLabels({ candidats, onSubmit, hasSeed }) {
           {candidats.map((c) => {
             const label = <div className={classes.root}>
               <Avatar alt="Remy Sharp" src={c.img} /> 
-              <span>{c.name} ({c.address})</span>
+              <span style={{ wordBreak: 'break-word' }}>{c.name} ({c.address})</span>
             </div>
             return (
               <FormControlLabel value={c.id} control={<Radio disabled={!hasSeed} />} 
