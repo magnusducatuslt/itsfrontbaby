@@ -1,2 +1,3 @@
 import * as Wallet from "./wallet";
-export default { ...Wallet };
+import * as Candidats from "./candidats";
+export default { ...Wallet, ...Candidats };
