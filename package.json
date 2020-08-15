@@ -20,7 +20,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "deploy": "tar -czvf voter.tar.gz ./build && scp -i ~/Downloads/digitaloceanmagnusducatuslt voter.tar.gz magnusducatuslt@165.22.24.31:./"
   },
   "eslintConfig": {
     "extends": "react-app"

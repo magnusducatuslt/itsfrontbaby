@@ -99,16 +99,19 @@ export function Page() {
                 tx: txHash.hash,
               })
               .catch((e) => {
-                setError("Не удалось сохранить");
+                console.log("deep 3", 3);
+                setError("Не удалось сохранить, но голос учтен");
               });
           })
           .catch((e) => {
-            setError("Ошибка сети");
+            console.log("deep 2", e);
+            setError("Недостаточно средств/либоо нет доступа к ноде");
             // self.$toast.error("Произошла ошибка");
           });
       });
     } catch (e) {
-      setError("Некоректный адресс");
+      console.log("deep 1", e);
+      setError("Некоректная кодовая фраза");
     }
   }
 
