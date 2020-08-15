@@ -6,58 +6,54 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Checkbox from "@material-ui/core/Checkbox";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
+import Button from "@material-ui/core/Button";
 import Favorite from "@material-ui/icons/Favorite";
 import FavoriteBorder from "@material-ui/icons/FavoriteBorder";
 
-const GreenCheckbox = withStyles({
-  root: {
-    color: green[400],
-    "&$checked": {
-      color: green[600],
-    },
-  },
-  checked: {},
-})((props) => <Checkbox color="default" {...props} />);
-
-export default function CheckboxLabels({ candidats }) {
-  const checkboxs = [];
+export default function CheckboxLabels({ candidats, onSubmit }) {
   const signedCandidats = candidats.reduce((prev, cand) => {
     prev[cand.name] = true;
-    checkboxs.push(
-      <FormControlLabel
-        key={`${Date.now}${cand.id}`}
-        control={
-          <GreenCheckbox
-            checked={state[cand.name]}
-            onChange={handleChange}
-            name={cand.name}
-          />
-        }
-        label="Custom color"
-      />
-    );
+
     return prev;
   }, {});
-  console.log(signedCandidats);
+
   const [state, setState] = React.useState(signedCandidats);
 
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
   };
 
+  const checkboxs = candidats.map((cand) => (
+    <FormControlLabel
+      control={
+        <Checkbox
+          key={`${Date.now}${cand.id}`}
+          icon={<FavoriteBorder />}
+          checkedIcon={<Favorite />}
+          onChange={handleChange}
+          value={cand.id}
+          name={cand.id}
+        />
+      }
+      label={cand.name}
+    />
+  ));
+
   return (
-    <FormGroup row>
-      {/* <FormControlLabel
-        control={
-          <GreenCheckbox
-            checked={state.checkedG}
-            onChange={handleChange}
-            name="checkedG"
-          />
-        }
-        label="Custom color"
-      /> */}
-      {checkboxs}
-    </FormGroup>
+    <div>
+      <FormGroup row>{checkboxs}</FormGroup>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          console.log(state);
+          //onSubmit(state);
+        }}
+      >
+        Проголосовать
+      </Button>
+    </div>
   );
 }

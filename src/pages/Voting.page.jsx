@@ -18,16 +18,17 @@ export function Page() {
   useEffect(() => {
     async function requestCandidats() {
       const fetched = await Blockchain.getCandidats();
+      console.log(fetched);
       setCandidats(fetched);
     }
     requestCandidats();
   }, []);
   // /address?address=
 
-  function chooseCandidate(e) {
-    e.preventDefault();
-    e.stopPropagation();
+  function chooseCandidate(state) {
+    let choosedCandidate = null;
   }
+  console.log(candidats);
   return (
     <div>
       <h1>Voting page</h1>
