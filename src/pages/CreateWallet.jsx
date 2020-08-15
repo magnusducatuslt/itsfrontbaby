@@ -64,7 +64,6 @@ export function Page() {
             const {
               data: { status, message },
             } = response;
-            console.log(response);
             if (status === 0 || message === "ADDRESS_REGISTRATED") {
               alert("Ваш кошелек сохранен!");
               showSaveButton(false);
