@@ -157,7 +157,7 @@ export function Page() {
         </Alert>
       </Snackbar>
       <h1> Account page</h1>
-      {fromAddress && <h4>from:{fromAddress}</h4>}
+      {fromAddress && <h4 style={{ wordBreak: 'break-word' }}>from:{fromAddress}</h4>}
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <TextField
