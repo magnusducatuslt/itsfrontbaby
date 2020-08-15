@@ -33,8 +33,10 @@ export function Page() {
     }
 
     isUserExist(id)
-      .then((exist) => {
-        if (exist) {
+      .then((data) => {
+        if (!data.message) throw new Error("Error");
+        if (data.message.telegramId !== id) throw new Error("id incorrect");
+        if (data.message.wallet) {
           alert("у вас уже существует кошелек перейдите в свой аккаунт");
         } else {
           const mnemo = window.minterWallet.generateMnemonic();

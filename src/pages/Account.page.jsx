@@ -21,12 +21,16 @@ export function Page() {
 
   const [candidats, setCandidats] = useState([]);
 
-  const [fromAddress, setFromAddress] = useState('')
+  const [fromAddress, setFromAddress] = useState("");
 
-  const COIN = process.env.REACT_APP_COIN;
-  const GAS_COIN = process.env.REACT_APP_GAS;
-  const CHAIN_ID = process.env.REACT_APP_CHAIN_ID;
-  const TX_TYPE = process.env.REACT_APP_TX_TYPE;
+  const {
+    REACT_APP_TX_TYPE,
+    REACT_APP_CHAIN_ID,
+    REACT_APP_GAS_COIN,
+    REACT_APP_COIN,
+    REACT_APP_NODE_URL,
+    REACT_APP_CORE_HOST,
+  } = process.env;
 
   useEffect(() => {
     async function requestCandidats() {
@@ -36,7 +40,7 @@ export function Page() {
     }
     requestCandidats();
   }, []);
-  // /address?address=
+  // https://minter-node-1.testnet.minter.network/address?address=
 
   function createPassport() {
     window.Telegram.Passport.auth(creeds, function (show) {
@@ -51,7 +55,7 @@ export function Page() {
 
     const minter = new window.minterSDK.Minter({
       apiType: "node",
-      baseURL: "https://minter-node-1.testnet.minter.network/",
+      baseURL: REACT_APP_NODE_URL,
     });
 
     const SENDER_SEED = textRef.current.value;
@@ -66,14 +70,14 @@ export function Page() {
             .postTx(
               {
                 nonce: nonceForReciever,
-                chainId: CHAIN_ID,
-                type: TX_TYPE,
+                chainId: REACT_APP_CHAIN_ID,
+                type: REACT_APP_TX_TYPE,
                 data: {
                   to: candidat.address,
                   value: 1,
-                  coin: COIN,
+                  coin: REACT_APP_COIN,
                 },
-                gasCoin: GAS_COIN,
+                gasCoin: REACT_APP_GAS_COIN,
               },
               { privateKey: wallet.getPrivateKeyString() }
             )
@@ -82,7 +86,7 @@ export function Page() {
               console.log(txHash);
               // self.$toast.success("Голос учтен");
               axios
-                .post(`${process.env.REACT_APP_CORE_HOST}/voted`, {
+                .post(`${REACT_APP_CORE_HOST}/voted`, {
                   address: candidat.address,
                   tx: txHash.hash,
                 })
@@ -104,20 +108,20 @@ export function Page() {
 
   const textRef = useRef();
 
-  const [hasSeed, setHasSeed] = useState(false)
+  const [hasSeed, setHasSeed] = useState(false);
 
   const changeSeed = (e) => {
-    const seed = e.target.value
+    const seed = e.target.value;
 
-    setHasSeed(!!e.target.value)
+    setHasSeed(!!e.target.value);
 
     try {
       const wallet = walletFromMnemonic(seed);
-      setFromAddress(wallet.getAddressString())
-    } catch(e) {
-      setFromAddress('')
+      setFromAddress(wallet.getAddressString());
+    } catch (e) {
+      setFromAddress("");
     }
-  }
+  };
 
   const [error, setError] = useState('')
   const [successMsg, setSuccessMsg] = useState('')
@@ -140,15 +144,24 @@ export function Page() {
         </Alert>
       </Snackbar>
       <h1> Account page</h1>
-<Grid container spacing={3}>
-<Grid item xs={3}>
-      <TextField inputRef={textRef} label="Сиид фраза" variant="outlined" onChange={changeSeed}/>
+      <Grid container spacing={3}>
+        <Grid item xs={3}>
+          <TextField
+            inputRef={textRef}
+            label="Сиид фраза"
+            variant="outlined"
+            onChange={changeSeed}
+          />
         </Grid>
         <Grid item xs={9}>
-      {fromAddress && <h4>from:{fromAddress}</h4>}
+          {fromAddress && <h4>from:{fromAddress}</h4>}
         </Grid>
-</Grid>
-      <Checkbox hasSeed={hasSeed} candidats={candidats} onSubmit={chooseCandidate} />
+      </Grid>
+      <Checkbox
+        hasSeed={hasSeed}
+        candidats={candidats}
+        onSubmit={chooseCandidate}
+      />
       <Button variant="contained" color="primary" onClick={createPassport}>
         создать кошелек
       </Button>
