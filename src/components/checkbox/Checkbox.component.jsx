@@ -16,8 +16,20 @@ export default function CheckboxLabels({ candidats, onSubmit }) {
 
   return (
     <div>
+    
+      <Button
+        variant="contained"
+        color="primary"
+        disabled={!id}
+        onClick={(e) => {
+          const canditate = candidats.find(x => x.id === id)
+          onSubmit(canditate)
+        }}
+      >
+        Проголосовать
+      </Button>
+    <div>
       <FormControl component="fieldset">
-        <FormLabel component="legend">Gender</FormLabel>
         <RadioGroup aria-label="gender" name="gender1" value={id} onChange={handleChange}>
           {candidats.map((c) => {
             return (
@@ -26,18 +38,7 @@ export default function CheckboxLabels({ candidats, onSubmit }) {
           })}
         </RadioGroup>
       </FormControl>
-
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={!id}
-        onClick={(e) => {
-          const canditate = candidats.find(x => x.id === id)
-          console.log(' canditate ', canditate)
-        }}
-      >
-        Проголосовать
-      </Button>
+    </div>
     </div>
   );
 }
