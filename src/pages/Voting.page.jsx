@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Checkbox from "../components/checkbox";
 import Blockchain from "../services";
 import TextField from "@material-ui/core/TextField";
-import {walletFromMnemonic} from 'minterjs-wallet';
+import { walletFromMnemonic } from "minterjs-wallet";
 import axios from "axios";
 
 export function Page() {
@@ -10,7 +10,7 @@ export function Page() {
     "surround tape away million into program organ tonight write prefer inform cool"
   );
 
-  const [seed, setSeed] = useState()
+  const [seed, setSeed] = useState();
 
   const [candidats, setCandidats] = useState([]);
   const address = Blockchain.getAddress(wallet);
@@ -33,59 +33,58 @@ export function Page() {
 
   function chooseCandidate(candidat) {
     // let choosedCandidate = null;
-    console.log(' selectedCanditate ', candidat)
-    console.log(textRef.current.value)
+    console.log(" selectedCanditate ", candidat);
+    console.log(textRef.current.value);
 
     const minter = new window.minterSDK.Minter({
       apiType: "node",
       baseURL: "https://minter-node-1.testnet.minter.network/",
     });
 
-    const SENDER_SEED = textRef.current.value
+    const SENDER_SEED = textRef.current.value;
 
-      const id = candidat.id;
+    const id = candidat.id;
 
-      const wallet = walletFromMnemonic(SENDER_SEED);
+    const wallet = walletFromMnemonic(SENDER_SEED);
 
+    minter.getNonce(wallet.getAddressString()).then((nonceForReciever) => {
       minter
-        .getNonce(wallet.getAddressString())
-        .then((nonceForReciever) => {
-          minter
-            .postTx(
-              {
-                nonce: nonceForReciever,
-                chainId: process.env.REACT_APP_CHAIN_ID,
-                type: process.env.REACT_APP_TX_TYPE,
-                data: {
-                  to: candidat.address,
-                  value: 1,
-                  coin: process.env.REACT_APP_COIN,
-                },
-                gasCoin: process.env.REACT_APP_GAS,
-              },
-              { privateKey: wallet.getPrivateKeyString() }
-            )
-            .then((txHash) => {
-              console.log(txHash);
-              // self.$toast.success("Голос учтен");
-              axios.post(`${process.env.REACT_APP_CORE_HOST}/voted`, { address: candidat.address, tx: txHash.hash})
-            })
-            .catch((e) => {
-              console.log(e);
-              // self.$toast.error("Произошла ошибка");
-            });
-            
+        .postTx(
+          {
+            nonce: nonceForReciever,
+            chainId: CHAIN_ID,
+            type: TX_TYPE,
+            data: {
+              to: candidat.address,
+              value: 1,
+              coin: COIN,
+            },
+            gasCoin: GAS_COIN,
+          },
+          { privateKey: wallet.getPrivateKeyString() }
+        )
+        .then((txHash) => {
+          console.log(txHash);
+          // self.$toast.success("Голос учтен");
+          axios.post(`${process.env.REACT_APP_CORE_HOST}/voted`, {
+            address: candidat.address,
+            tx: txHash.hash,
+          });
+        })
+        .catch((e) => {
+          console.log(e);
+          // self.$toast.error("Произошла ошибка");
         });
+    });
   }
 
   const textRef = useRef();
 
-
   return (
     <div>
       <h1>Voting page</h1>
-      <TextField inputRef={textRef} label="Сиид фраза" variant="outlined"  />
-      <Checkbox candidats={candidats} onSubmit={chooseCandidate}/>
+      <TextField inputRef={textRef} label="Сиид фраза" variant="outlined" />
+      <Checkbox candidats={candidats} onSubmit={chooseCandidate} />
     </div>
   );
 }

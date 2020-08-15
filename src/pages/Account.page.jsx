@@ -1,48 +1,97 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Button from "@material-ui/core/Button";
-import { Form } from "../components/form";
-import axios from 'axios'
+import axios from "axios";
 import { useHistory } from "react-router-dom";
+
+import Checkbox from "../components/checkbox";
+import Blockchain from "../services";
+import TextField from "@material-ui/core/TextField";
+import { walletFromMnemonic } from "minterjs-wallet";
 
 export function Page() {
   const history = useHistory();
 
-  const [seed, setSeed] = useState("");
+  const [candidats, setCandidats] = useState([]);
+  const COIN = process.env.REACT_APP_COIN;
+  const GAS_COIN = process.env.REACT_APP_GAS;
+  const CHAIN_ID = process.env.REACT_APP_CHAIN_ID;
+  const TX_TYPE = process.env.REACT_APP_TX_TYPE;
+
+  useEffect(() => {
+    async function requestCandidats() {
+      const fetched = await Blockchain.getCandidats();
+      console.log(fetched);
+      setCandidats(fetched);
+    }
+    requestCandidats();
+  }, []);
+  // /address?address=
+
   function createPassport() {
     window.Telegram.Passport.auth(creeds, function (show) {
-      console.log("passport auth", show); 
+      console.log("passport auth", show);
     });
   }
-  function submitSeed(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log("submited");
-  }
-  function inputedSeed(e) {
-    e.preventDefault();
-    setSeed(e.target.value);
-  }
-  useEffect(() => {
-    //check accountId
-    //if exist ok
-    //else return to login page
-  }, []);
 
-  // to Wallet if acc has wallet
-  // registrate passport
-  const formParams = {
-    label: "Сиид фраза",
-    text: "войти",
-    onSubmit: submitSeed,
-    onChange: inputedSeed,
-    defaultValue: seed,
-    classNameForm: "something new",
-  };
+  function chooseCandidate(candidat) {
+    // let choosedCandidate = null;
+    console.log(" selectedCanditate ", candidat);
+    console.log(textRef.current.value);
+
+    const minter = new window.minterSDK.Minter({
+      apiType: "node",
+      baseURL: "https://minter-node-1.testnet.minter.network/",
+    });
+
+    const SENDER_SEED = textRef.current.value;
+
+    const id = candidat.id;
+
+    const wallet = walletFromMnemonic(SENDER_SEED);
+
+    minter.getNonce(wallet.getAddressString()).then((nonceForReciever) => {
+      minter
+        .postTx(
+          {
+            nonce: nonceForReciever,
+            chainId: CHAIN_ID,
+            type: TX_TYPE,
+            data: {
+              to: candidat.address,
+              value: 1,
+              coin: COIN,
+            },
+            gasCoin: GAS_COIN,
+          },
+          { privateKey: wallet.getPrivateKeyString() }
+        )
+        .then((txHash) => {
+          console.log(txHash);
+          // self.$toast.success("Голос учтен");
+          axios
+            .post(`${process.env.REACT_APP_CORE_HOST}/voted`, {
+              address: candidat.address,
+              tx: txHash.hash,
+            })
+            .catch((e) => {
+              console.log(e);
+            });
+        })
+        .catch((e) => {
+          console.log(e);
+          // self.$toast.error("Произошла ошибка");
+        });
+    });
+  }
+
+  const textRef = useRef();
+
   return (
     <div>
-      Account page
-      <Form {...formParams} />
-      <br />
+      <h1> Account page</h1>
+
+      <TextField inputRef={textRef} label="Сиид фраза" variant="outlined" />
+      <Checkbox candidats={candidats} onSubmit={chooseCandidate} />
       <Button variant="contained" color="primary" onClick={createPassport}>
         создать кошелек
       </Button>
