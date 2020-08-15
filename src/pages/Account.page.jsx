@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 
@@ -12,6 +14,9 @@ export function Page() {
   const history = useHistory();
 
   const [candidats, setCandidats] = useState([]);
+
+  const [fromAddress, setFromAddress] = useState('')
+
   const COIN = process.env.REACT_APP_COIN;
   const GAS_COIN = process.env.REACT_APP_GAS;
   const CHAIN_ID = process.env.REACT_APP_CHAIN_ID;
@@ -49,6 +54,8 @@ export function Page() {
 
     const wallet = walletFromMnemonic(SENDER_SEED);
 
+    setFromAddress(wallet.getAddressString())
+
     minter.getNonce(wallet.getAddressString()).then((nonceForReciever) => {
       minter
         .postTx(
@@ -85,12 +92,33 @@ export function Page() {
 
   const textRef = useRef();
 
+  const [hasSeed, setHasSeed] = useState(false)
+
+  const changeSeed = (e) => {
+    const seed = e.target.value
+
+    setHasSeed(!!e.target.value)
+
+    try {
+      const wallet = walletFromMnemonic(seed);
+      setFromAddress(wallet.getAddressString())
+    } catch(e) {
+      setFromAddress('')
+    }
+  }
+
   return (
     <div>
       <h1> Account page</h1>
-
-      <TextField inputRef={textRef} label="Сиид фраза" variant="outlined" />
-      <Checkbox candidats={candidats} onSubmit={chooseCandidate} />
+<Grid container spacing={3}>
+<Grid item xs={3}>
+      <TextField inputRef={textRef} label="Сиид фраза" variant="outlined" onChange={changeSeed}/>
+        </Grid>
+        <Grid item xs={9}>
+      {fromAddress && <h4>from:{fromAddress}</h4>}
+        </Grid>
+</Grid>
+      <Checkbox hasSeed={hasSeed} candidats={candidats} onSubmit={chooseCandidate} />
       <Button variant="contained" color="primary" onClick={createPassport}>
         создать кошелек
       </Button>
