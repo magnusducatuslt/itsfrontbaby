@@ -1,13 +1,14 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import { useHistory } from "react-router-dom";
+import Typography from "@material-ui/core/Typography";
 
 export function Page() {
   const history = useHistory();
-  
+
   const redirectToLogin = () => {
-    history.push('/login')
-  }
+    history.push("/login");
+  };
   return (
     <div>
       В целях регистрации в сервисе <b>“Честный голос”</b>, принимаю решение о
@@ -20,7 +21,7 @@ export function Page() {
         <li>Селфи с паспортом</li>
       </ol>
       <Button variant="contained" color="primary" onClick={redirectToLogin}>
-        Подтвердить личность
+        Согласен
       </Button>
     </div>
   );
