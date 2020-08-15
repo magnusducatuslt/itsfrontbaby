@@ -20,16 +20,26 @@ const GreenCheckbox = withStyles({
 })((props) => <Checkbox color="default" {...props} />);
 
 export default function CheckboxLabels({ candidats }) {
-  candidats.reduce((prev, cand) => {
+  const checkboxs = [];
+  const signedCandidats = candidats.reduce((prev, cand) => {
     prev[cand.name] = true;
+    checkboxs.push(
+      <FormControlLabel
+        key={`${Date.now}${cand.id}`}
+        control={
+          <GreenCheckbox
+            checked={state[cand.name]}
+            onChange={handleChange}
+            name={cand.name}
+          />
+        }
+        label="Custom color"
+      />
+    );
     return prev;
   }, {});
-  const [state, setState] = React.useState({
-    checkedA: true,
-    checkedB: true,
-    checkedF: true,
-    checkedG: true,
-  });
+  console.log(signedCandidats);
+  const [state, setState] = React.useState(signedCandidats);
 
   const handleChange = (event) => {
     setState({ ...state, [event.target.name]: event.target.checked });
@@ -37,7 +47,7 @@ export default function CheckboxLabels({ candidats }) {
 
   return (
     <FormGroup row>
-      <FormControlLabel
+      {/* <FormControlLabel
         control={
           <GreenCheckbox
             checked={state.checkedG}
@@ -46,7 +56,8 @@ export default function CheckboxLabels({ candidats }) {
           />
         }
         label="Custom color"
-      />
+      /> */}
+      {checkboxs}
     </FormGroup>
   );
 }

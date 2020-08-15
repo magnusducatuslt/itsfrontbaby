@@ -34,7 +34,7 @@ export function Page() {
       <h2>Address {address}</h2>
       <h3>Coin</h3>
       <h4>Gas</h4>
-      <Checkbox />
+      <Checkbox candidats={candidats} />
     </div>
   );
 }

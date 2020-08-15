@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Button from "@material-ui/core/Button";
 import { Form } from "../components/form";
+import axios from 'axios'
+import { useHistory } from "react-router-dom";
+
 export function Page() {
+  const history = useHistory();
+
   const [seed, setSeed] = useState("");
   function createPassport() {
     window.Telegram.Passport.auth(creeds, function (show) {
-      console.log("passport auth", show);
+      console.log("passport auth", show); 
     });
   }
   function submitSeed(e) {

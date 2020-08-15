@@ -1,7 +1,13 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
+import { useHistory } from "react-router-dom";
 
 export function Page() {
+  const history = useHistory();
+  
+  const redirectToLogin = () => {
+    history.push('/login')
+  }
   return (
     <div>
       В целях регистрации в сервисе <b>“Честный голос”</b>, принимаю решение о
@@ -13,7 +19,7 @@ export function Page() {
         <li>Фотография паспорта</li>
         <li>Селфи с паспортом</li>
       </ol>
-      <Button variant="contained" color="primary">
+      <Button variant="contained" color="primary" onClick={redirectToLogin}>
         Подтвердить личность
       </Button>
     </div>
