@@ -62,6 +62,7 @@ export function Page() {
 
     const id = candidat.id;
 
+console.log(' process.env ', process.env)
     try {
         const wallet = walletFromMnemonic(SENDER_SEED);
         setFromAddress(wallet.getAddressString()) 
@@ -91,11 +92,11 @@ export function Page() {
                   tx: txHash.hash,
                 })
                 .catch((e) => {
-                  console.log(e);
+                  setError('Не удалось сохранить')
                 });
             })
             .catch((e) => {
-              console.log(e);
+              setError('Ошибка сети')
               // self.$toast.error("Произошла ошибка");
             });
         }); 
@@ -144,17 +145,16 @@ export function Page() {
         </Alert>
       </Snackbar>
       <h1> Account page</h1>
+      {fromAddress && <h4>from:{fromAddress}</h4>}
       <Grid container spacing={3}>
-        <Grid item xs={3}>
+        <Grid item xs={12}>
           <TextField
             inputRef={textRef}
             label="Сиид фраза"
             variant="outlined"
             onChange={changeSeed}
+            style={{width: '100%', paddingBottom: '20px'}}
           />
-        </Grid>
-        <Grid item xs={9}>
-          {fromAddress && <h4>from:{fromAddress}</h4>}
         </Grid>
       </Grid>
       <Checkbox
