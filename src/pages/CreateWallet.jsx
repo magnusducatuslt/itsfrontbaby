@@ -9,7 +9,7 @@ const isUserExist = (id) => {
       .get(`https://core.ididntknowwhatyouheardaboutme.tk/user/${id}`)
       .then((response) => {
         const { data } = response;
-        resolve(data.message && data.message.wallet);
+        resolve(data);
       })
       .catch(() => {
         reject();
@@ -34,8 +34,10 @@ export function Page() {
 
     isUserExist(id)
       .then((data) => {
+        console.log(data);
         if (!data.message) throw new Error("Error");
-        if (data.message.telegramId !== id) throw new Error("id incorrect");
+        if (data.status !== 0) throw new Error("Error");
+        if (data.message.telegramId != id) throw new Error("id incorrect");
         if (data.message.wallet) {
           alert("у вас уже существует кошелек перейдите в свой аккаунт");
         } else {

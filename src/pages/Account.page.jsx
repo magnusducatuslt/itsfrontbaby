@@ -9,8 +9,8 @@ import Checkbox from "../components/checkbox";
 import Blockchain from "../services";
 import TextField from "@material-ui/core/TextField";
 import { walletFromMnemonic } from "minterjs-wallet";
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -26,12 +26,19 @@ export function Page() {
   const {
     REACT_APP_TX_TYPE,
     REACT_APP_CHAIN_ID,
-    REACT_APP_GAS_COIN,
+    REACT_APP_GAS,
     REACT_APP_COIN,
     REACT_APP_NODE_URL,
     REACT_APP_CORE_HOST,
   } = process.env;
-
+  console.log(
+    REACT_APP_TX_TYPE,
+    REACT_APP_CHAIN_ID,
+    REACT_APP_GAS,
+    REACT_APP_COIN,
+    REACT_APP_NODE_URL,
+    REACT_APP_CORE_HOST
+  );
   useEffect(() => {
     async function requestCandidats() {
       const fetched = await Blockchain.getCandidats();
@@ -63,47 +70,45 @@ export function Page() {
     const id = candidat.id;
 
     try {
-        const wallet = walletFromMnemonic(SENDER_SEED);
-        setFromAddress(wallet.getAddressString()) 
-        minter.getNonce(wallet.getAddressString()).then((nonceForReciever) => {
-          minter
-            .postTx(
-              {
-                nonce: nonceForReciever,
-                chainId: REACT_APP_CHAIN_ID,
-                type: REACT_APP_TX_TYPE,
-                data: {
-                  to: candidat.address,
-                  value: 1,
-                  coin: REACT_APP_COIN,
-                },
-                gasCoin: REACT_APP_GAS_COIN,
+      const wallet = walletFromMnemonic(SENDER_SEED);
+      setFromAddress(wallet.getAddressString());
+      minter.getNonce(wallet.getAddressString()).then((nonceForReciever) => {
+        minter
+          .postTx(
+            {
+              nonce: nonceForReciever,
+              chainId: REACT_APP_CHAIN_ID,
+              type: REACT_APP_TX_TYPE,
+              data: {
+                to: candidat.address,
+                value: 1,
+                coin: REACT_APP_COIN,
               },
-              { privateKey: wallet.getPrivateKeyString() }
-            )
-            .then((txHash) => {
-              setSuccessMsg('Ваш голос учтен!')
-              console.log(txHash);
-              // self.$toast.success("Голос учтен");
-              axios
-                .post(`${REACT_APP_CORE_HOST}/voted`, {
-                  address: candidat.address,
-                  tx: txHash.hash,
-                })
-                .catch((e) => {
-                  console.log(e);
-                });
-            })
-            .catch((e) => {
-              console.log(e);
-              // self.$toast.error("Произошла ошибка");
-            });
-        }); 
-    } catch(e) {
-      setError('Некоректный адресс')
+              gasCoin: REACT_APP_GAS,
+            },
+            { privateKey: wallet.getPrivateKeyString() }
+          )
+          .then((txHash) => {
+            setSuccessMsg("Ваш голос учтен!");
+            console.log(txHash);
+            // self.$toast.success("Голос учтен");
+            axios
+              .post(`${REACT_APP_CORE_HOST}/voted`, {
+                address: candidat.address,
+                tx: txHash.hash,
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          })
+          .catch((e) => {
+            console.log(e);
+            // self.$toast.error("Произошла ошибка");
+          });
+      });
+    } catch (e) {
+      setError("Некоректный адресс");
     }
-
-
   }
 
   const textRef = useRef();
@@ -123,27 +128,32 @@ export function Page() {
     }
   };
 
-  const [error, setError] = useState('')
-  const [successMsg, setSuccessMsg] = useState('')
+  const [error, setError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
 
   const handleClose = () => {
-    setError('')
-    setSuccessMsg('')
-  }
+    setError("");
+    setSuccessMsg("");
+  };
 
   return (
     <div>
-    <Snackbar open={!!error} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar open={!!error} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="error">
           {error}
         </Alert>
       </Snackbar>
-<Snackbar open={!!successMsg} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar
+        open={!!successMsg}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
         <Alert onClose={handleClose} severity="success">
           {successMsg}
         </Alert>
       </Snackbar>
       <h1> Account page</h1>
+
       <Grid container spacing={3}>
         <Grid item xs={3}>
           <TextField
@@ -162,6 +172,11 @@ export function Page() {
         candidats={candidats}
         onSubmit={chooseCandidate}
       />
+      <br />
+      <p>
+        Для создание кошелька вы должны быть: 1) старше 09.08.2002 2)
+        гражданином РБ
+      </p>
       <Button variant="contained" color="primary" onClick={createPassport}>
         создать кошелек
       </Button>
