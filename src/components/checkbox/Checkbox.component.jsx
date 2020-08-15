@@ -7,7 +7,7 @@ import RadioGroup from '@material-ui/core/RadioGroup'
 import FormLabel from '@material-ui/core/FormLabel'
 
 
-export default function CheckboxLabels({ candidats, onSubmit }) {
+export default function CheckboxLabels({ candidats, onSubmit, hasSeed }) {
   const [id, setId] = React.useState();
 
   const handleChange = (event) => {
@@ -16,11 +16,11 @@ export default function CheckboxLabels({ candidats, onSubmit }) {
 
   return (
     <div>
-    
+
       <Button
         variant="contained"
         color="primary"
-        disabled={!id}
+        disabled={!id || !hasSeed}
         onClick={(e) => {
           const canditate = candidats.find(x => x.id === id)
           onSubmit(canditate)
@@ -30,10 +30,10 @@ export default function CheckboxLabels({ candidats, onSubmit }) {
       </Button>
     <div>
       <FormControl component="fieldset">
-        <RadioGroup aria-label="gender" name="gender1" value={id} onChange={handleChange}>
+        <RadioGroup  aria-label="gender" name="gender1" value={id} onChange={handleChange}>
           {candidats.map((c) => {
             return (
-              <FormControlLabel value={c.id} control={<Radio />} label={c.name} />
+              <FormControlLabel value={c.id} control={<Radio disabled={!hasSeed} />} label={ `${c.name} (${c.address})`} />
              )
           })}
         </RadioGroup>
