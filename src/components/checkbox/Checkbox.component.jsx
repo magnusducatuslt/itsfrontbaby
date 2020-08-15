@@ -19,7 +19,11 @@ const GreenCheckbox = withStyles({
   checked: {},
 })((props) => <Checkbox color="default" {...props} />);
 
-export default function CheckboxLabels() {
+export default function CheckboxLabels({ candidats }) {
+  candidats.reduce((prev, cand) => {
+    prev[cand.name] = true;
+    return prev;
+  }, {});
   const [state, setState] = React.useState({
     checkedA: true,
     checkedB: true,
@@ -33,52 +37,6 @@ export default function CheckboxLabels() {
 
   return (
     <FormGroup row>
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={state.checkedA}
-            onChange={handleChange}
-            name="checkedA"
-          />
-        }
-        label="Secondary"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={state.checkedB}
-            onChange={handleChange}
-            name="checkedB"
-            color="primary"
-          />
-        }
-        label="Primary"
-      />
-      <FormControlLabel
-        control={<Checkbox name="checkedC" />}
-        label="Uncontrolled"
-      />
-      <FormControlLabel
-        disabled
-        control={<Checkbox name="checkedD" />}
-        label="Disabled"
-      />
-      <FormControlLabel
-        disabled
-        control={<Checkbox checked name="checkedE" />}
-        label="Disabled"
-      />
-      <FormControlLabel
-        control={
-          <Checkbox
-            checked={state.checkedF}
-            onChange={handleChange}
-            name="checkedF"
-            indeterminate
-          />
-        }
-        label="Indeterminate"
-      />
       <FormControlLabel
         control={
           <GreenCheckbox

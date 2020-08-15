@@ -1,5 +1,15 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 
 export function Page() {
-  return <div>create wallet</div>;
+  let history = useHistory();
+  function Login() {
+    history.push("/account");
+  }
+
+  return (
+    <div>
+      create wallet <button onClick={Login}>Login</button>
+    </div>
+  );
 }
