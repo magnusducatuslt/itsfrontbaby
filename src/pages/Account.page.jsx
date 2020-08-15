@@ -10,24 +10,7 @@ export function Page() {
   const [seed, setSeed] = useState("");
   function createPassport() {
     window.Telegram.Passport.auth(creeds, function (show) {
-      console.log("passport auth", show);
-
-      const id = '141452391'// localStorage.getItem('account_id')
-
-      if (!id) {
-        history.push('/login')
-      } else {
-        axios.get(`https://core.ididntknowwhatyouheardaboutme.tk/user/${id}`)
-        .then((response) => {
-          const { data } = response
-          if (data.message && data.message.wallet) {
-            alert('wallet exist')
-          }
-          console.log(response.data)
-        }).catch(() => {
-          history.push('/login')
-        })
-      }  
+      console.log("passport auth", show); 
     });
   }
   function submitSeed(e) {
