@@ -10,12 +10,10 @@ export function Page() {
     "surround tape away million into program organ tonight write prefer inform cool"
   );
 
-  const [seed, setSeed] = useState();
-
-  const [candidats, setCandidats] = useState([]);
   const address = Blockchain.getAddress(wallet);
   const privKey = Blockchain.getPrivateKey(wallet);
 
+  const [candidats, setCandidats] = useState([]);
   const COIN = process.env.REACT_APP_COIN;
   const GAS_COIN = process.env.REACT_APP_GAS;
   const CHAIN_ID = process.env.REACT_APP_CHAIN_ID;

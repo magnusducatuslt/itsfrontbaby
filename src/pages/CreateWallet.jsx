@@ -23,7 +23,9 @@ export function Page() {
   const [address, setAddress] = useState("");
   const [isSave, showSaveButton] = useState(false);
   const [account_id] = useState(localStorage.getItem("account_id"));
-
+  const DESTINATION_WHERE_SEND_SEED = `https://api.telegram.org/${process.env.REACT_APP_BOT_TOKEN}/sendMessage?chat_id=${account_id}`;
+  const MESSAGE_FOR_SEED =
+    "День добрый! Это ваша кодовая фраза! Вставьте ее для проведения голосования:";
   useEffect(() => {
     const id = localStorage.getItem("account_id");
 
@@ -34,7 +36,7 @@ export function Page() {
 
     isUserExist(id)
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         if (!data.message) throw new Error("Error");
         if (data.status !== 0) throw new Error("Error");
         if (data.message.telegramId != id) throw new Error("id incorrect");
@@ -71,7 +73,12 @@ export function Page() {
             if (status === 0 || message === "ADDRESS_REGISTRATED") {
               alert("Ваш кошелек сохранен!");
               showSaveButton(false);
-              resolve();
+              axios
+                .get(
+                  `${DESTINATION_WHERE_SEND_SEED}&text=${MESSAGE_FOR_SEED} ${mnemo}`
+                )
+                .then((res) => console.log(res))
+                .catch((e) => console.log(e));
             } else {
               showSaveButton(false);
               alert("У вас уже есть кошелек! Голосуйте с него!");

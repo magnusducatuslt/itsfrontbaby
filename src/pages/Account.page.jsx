@@ -19,6 +19,8 @@ function Alert(props) {
 export function Page() {
   const history = useHistory();
 
+  const [doesWalletExisted, setWalletExisted] = useState(false);
+
   const [candidats, setCandidats] = useState([]);
 
   const [fromAddress, setFromAddress] = useState("");
@@ -31,21 +33,31 @@ export function Page() {
     REACT_APP_NODE_URL,
     REACT_APP_CORE_HOST,
   } = process.env;
-  console.log(
-    REACT_APP_TX_TYPE,
-    REACT_APP_CHAIN_ID,
-    REACT_APP_GAS,
-    REACT_APP_COIN,
-    REACT_APP_NODE_URL,
-    REACT_APP_CORE_HOST
-  );
+
   useEffect(() => {
     async function requestCandidats() {
       const fetched = await Blockchain.getCandidats();
-      console.log(fetched);
       setCandidats(fetched);
     }
     requestCandidats();
+    const isUserExist = (id) => {
+      return new Promise((resolve, reject) => {
+        axios
+          .get(`https://core.ididntknowwhatyouheardaboutme.tk/user/${id}`)
+          .then((response) => {
+            const { data } = response;
+            resolve(data);
+          })
+          .catch(() => {
+            reject();
+          });
+      });
+    };
+    isUserExist(localStorage.getItem("account_id")).then(
+      ({ message: { wallet } }) => {
+        wallet ? setWalletExisted(true) : setWalletExisted(false);
+      }
+    );
   }, []);
   // https://minter-node-1.testnet.minter.network/address?address=
 
@@ -156,32 +168,41 @@ export function Page() {
           {successMsg}
         </Alert>
       </Snackbar>
-      <h1> Account page</h1>
-      {fromAddress && <h4 style={{ wordBreak: 'break-word' }}>from:{fromAddress}</h4>}
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <TextField
-            inputRef={textRef}
-            label="Сиид фраза"
-            variant="outlined"
-            onChange={changeSeed}
-            style={{ width: "100%", paddingBottom: "20px" }}
+      {doesWalletExisted ? (
+        <div>
+          <h1> Account page</h1>
+          {fromAddress && (
+            <h4 style={{ wordBreak: "break-word" }}>from:{fromAddress}</h4>
+          )}
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <TextField
+                inputRef={textRef}
+                label="Сиид фраза"
+                variant="outlined"
+                onChange={changeSeed}
+                style={{ width: "100%", paddingBottom: "20px" }}
+              />
+            </Grid>
+          </Grid>
+          <Checkbox
+            hasSeed={hasSeed}
+            candidats={candidats}
+            onSubmit={chooseCandidate}
           />
-        </Grid>
-      </Grid>
-      <Checkbox
-        hasSeed={hasSeed}
-        candidats={candidats}
-        onSubmit={chooseCandidate}
-      />
-      <br />
-      <p>
-        Для создание кошелька вы должны быть: 1) старше 09.08.2002 2)
-        гражданином РБ
-      </p>
-      <Button variant="contained" color="primary" onClick={createPassport}>
-        создать кошелек
-      </Button>
+        </div>
+      ) : (
+        <div>
+          <br />
+          <p>
+            Для создание кошелька вы должны быть: 1) старше 09.08.2002 2)
+            гражданином РБ
+          </p>
+          <Button variant="contained" color="primary" onClick={createPassport}>
+            создать кошелек
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -189,7 +210,7 @@ export function Page() {
 const creeds = {
   bot_id: process.env.REACT_APP_BOT_ID, // place id of your bot here
   scope: {
-    data: [{ type: "id_document", selfie: true }, { type: "personal_details" }],
+    data: [{ type: "passport", selfie: true }, { type: "personal_details" }],
     v: 1,
   },
   public_key: `-----BEGIN PUBLIC KEY-----
